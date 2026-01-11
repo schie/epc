@@ -1,6 +1,6 @@
 {
   "name": "@schie/epc",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "EPC (Electronic Product Code) generator and parser for UHF RFID tags in TypeScript.",
   "repository": {
     "type": "git",
