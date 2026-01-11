@@ -1,0 +1,97 @@
+{
+  "name": "@schie/epc",
+  "version": "0.0.0",
+  "description": "EPC (Electronic Product Code) generator and parser for UHF RFID tags in TypeScript.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/schie/epc.git"
+  },
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "default": "./dist/index.mjs"
+    },
+    "./dist/*": {
+      "types": "./dist/*.d.ts",
+      "import": "./dist/*.mjs",
+      "require": "./dist/*.cjs"
+    }
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "packageManager": "npm@8.4.0",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc && tsup",
+    "lint": "eslint . && npm run lint:lockfile",
+    "lint:fix": "eslint . --fix",
+    "lint:lockfile": "lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm yarn",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build",
+    "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
+    "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch",
+    "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
+    "docs": "typedoc",
+    "docs:pages": "npm run docs && npm run examples:install && npm run examples:build && rm -rf docs/examples && cp -R examples/dist docs/examples",
+    "docs:serve": "npx http-server docs",
+    "examples:install": "cd examples && npm install",
+    "examples:dev": "cd examples && npm run dev",
+    "examples:build": "cd examples && npm run build",
+    "examples:preview": "cd examples && npm run preview"
+  },
+  "author": {
+    "name": "Dustin Schie",
+    "email": "github@schie.io",
+    "url": "https://github.com/schie"
+  },
+  "license": "MIT",
+  "keywords": [
+    "EPC",
+    "electronic product code",
+    "rfid",
+    "uhf",
+    "typescript",
+    "fluent",
+    "builder"
+  ],
+  "homepage": "https://github.com/schie/epc#readme",
+  "bugs": {
+    "url": "https://github.com/schie/epc/issues"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.9.2",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-security": "^3.0.1",
+    "jest": "^29.7.0",
+    "lint-staged": "^15.2.7",
+    "lockfile-lint": "^4.14.0",
+    "neostandard": "^0.11.9",
+    "prettier": "^3.6.2",
+    "ts-jest": "^29.3.4",
+    "tsup": "^8.5.0",
+    "typedoc": "^0.28.14",
+    "typedoc-plugin-markdown": "^4.9.0",
+    "typescript": "^5.9.3",
+    "validate-conventional-commit": "^1.0.4"
+  },
+  "lint-staged": {
+    "**/*.{js,json}": [
+      "npm run lint:fix"
+    ]
+  }
+}

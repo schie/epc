@@ -1,0 +1,15 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": ["src/index.ts"],
+  "tsconfig": "tsconfig.json",
+  "out": "docs",
+  "excludePrivate": true,
+  "excludeExternals": true,
+  "includeVersion": true,
+  "favicon": "schie.ico",
+  "navigationLinks": {
+    "GitHub": "https://github.com/schie/epc",
+    "npm": "https://www.npmjs.com/package/@schie/epc",
+    "examples": "./examples/"
+  }
+}
