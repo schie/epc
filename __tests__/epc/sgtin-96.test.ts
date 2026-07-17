@@ -125,6 +125,16 @@ describe('encodeSgtin96FromUpcA', () => {
     expect(encoded.fields.itemReference).toBe('029145');
   });
 
+  it('accepts a numeric string serial that does not start with 0', () => {
+    const encoded = encodeSgtin96FromUpcA({
+      upc: '036000291452',
+      companyPrefixLength: 6,
+      serial: '123',
+    });
+
+    expect(encoded.fields.serial).toBe('123');
+  });
+
   it('rejects invalid company prefix lengths', () => {
     expect(() =>
       encodeSgtin96FromUpcA({
