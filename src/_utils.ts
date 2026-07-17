@@ -50,6 +50,22 @@ export function assertFitsBits(value: bigint, bits: number, field: string): void
 }
 
 /**
+ * Assert a value fits within the given decimal digit width.
+ *
+ * @example
+ * ```ts
+ * assertFitsDigits(99n, 2, 'value');
+ * // => undefined
+ * ```
+ */
+export function assertFitsDigits(value: bigint, digits: number, field: string): void {
+  const max = 10n ** BigInt(digits) - 1n;
+  if (value > max) {
+    throw new Error(`${field} must fit within ${digits} digits`);
+  }
+}
+
+/**
  * Extract bits from a 96-bit value using MSB-based offsets.
  *
  * @example
