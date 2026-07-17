@@ -62,6 +62,9 @@ export function assertFitsDigits(value: bigint, digits: number, field: string): 
   if (!Number.isInteger(digits) || digits < 0) {
     throw new Error('digits must be a non-negative integer');
   }
+  if (value < 0n) {
+    throw new Error(`${field} must be non-negative`);
+  }
   const max = 10n ** BigInt(digits) - 1n;
   if (value > max) {
     throw new Error(`${field} must fit within ${digits} digit${digits === 1 ? '' : 's'}`);
