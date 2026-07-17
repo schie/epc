@@ -61,11 +61,19 @@ describe('assertFitsDigits', () => {
   });
 
   it('rejects a non-integer digit width', () => {
-    expect(() => assertFitsDigits(1n, 1.5, 'field')).toThrow('digits must be a non-negative integer');
+    expect(() => assertFitsDigits(1n, 1.5, 'field')).toThrow(
+      'digits must be a non-negative integer',
+    );
   });
 
   it('rejects a negative digit width', () => {
-    expect(() => assertFitsDigits(1n, -1, 'field')).toThrow('digits must be a non-negative integer');
+    expect(() => assertFitsDigits(1n, -1, 'field')).toThrow(
+      'digits must be a non-negative integer',
+    );
+  });
+
+  it('rejects a negative value', () => {
+    expect(() => assertFitsDigits(-1n, 2, 'field')).toThrow('field must be non-negative');
   });
 });
 
