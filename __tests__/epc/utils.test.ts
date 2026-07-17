@@ -1,5 +1,6 @@
 import {
   assertFitsBits,
+  assertFitsDigits,
   buildEpc96,
   formatBinary,
   formatDigits,
@@ -47,6 +48,24 @@ describe('buildEpc96', () => {
 describe('assertFitsBits', () => {
   it('throws when the value exceeds the bit width', () => {
     expect(() => assertFitsBits(8n, 3, 'field')).toThrow('field must fit within 3 bits');
+  });
+});
+
+describe('assertFitsDigits', () => {
+  it('throws when the value exceeds the digit width', () => {
+    expect(() => assertFitsDigits(100n, 2, 'field')).toThrow('field must fit within 2 digits');
+  });
+
+  it('singularizes the message for a single digit', () => {
+    expect(() => assertFitsDigits(10n, 1, 'field')).toThrow('field must fit within 1 digit');
+  });
+
+  it('rejects a non-integer digit width', () => {
+    expect(() => assertFitsDigits(1n, 1.5, 'field')).toThrow('digits must be a non-negative integer');
+  });
+
+  it('rejects a negative digit width', () => {
+    expect(() => assertFitsDigits(1n, -1, 'field')).toThrow('digits must be a non-negative integer');
   });
 });
 

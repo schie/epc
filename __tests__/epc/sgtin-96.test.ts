@@ -100,7 +100,7 @@ describe('encodeSgtin96 and parseSgtin96', () => {
       { value: 0n, bits: 38 },
     ]);
 
-    expect(() => parseSgtin96(value)).toThrow('itemReference must fit within 1 digits');
+    expect(() => parseSgtin96(value)).toThrow('itemReference must fit within 1 digit');
   });
 });
 
