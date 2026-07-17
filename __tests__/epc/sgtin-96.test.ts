@@ -76,6 +76,32 @@ describe('encodeSgtin96 and parseSgtin96', () => {
 
     expect(() => parseSgtin96(value)).toThrow('Unsupported SGTIN-96 partition 7');
   });
+
+  it('rejects a company prefix that exceeds its partition digit width', () => {
+    const value = buildEpc96([
+      { value: 0x30n, bits: 8 },
+      { value: 0n, bits: 3 },
+      { value: 0n, bits: 3 },
+      { value: (1n << 40n) - 1n, bits: 40 },
+      { value: 0n, bits: 4 },
+      { value: 0n, bits: 38 },
+    ]);
+
+    expect(() => parseSgtin96(value)).toThrow('companyPrefix must fit within 12 digits');
+  });
+
+  it('rejects an item reference that exceeds its partition digit width', () => {
+    const value = buildEpc96([
+      { value: 0x30n, bits: 8 },
+      { value: 0n, bits: 3 },
+      { value: 0n, bits: 3 },
+      { value: 0n, bits: 40 },
+      { value: (1n << 4n) - 1n, bits: 4 },
+      { value: 0n, bits: 38 },
+    ]);
+
+    expect(() => parseSgtin96(value)).toThrow('itemReference must fit within 1 digits');
+  });
 });
 
 describe('GS1 check digit helpers', () => {

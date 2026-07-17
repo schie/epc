@@ -6,6 +6,7 @@ import {
 } from './types.js';
 import {
   assertFitsBits,
+  assertFitsDigits,
   buildEpc96,
   formatBinary,
   formatDigits,
@@ -183,6 +184,8 @@ export function parseSgtin96(value: bigint): Sgtin96Result {
   const companyPrefix = getBits(value, 14, companyPrefixBits);
   const itemReference = getBits(value, 14 + companyPrefixBits, itemReferenceBits);
   const serial = value & ((1n << 38n) - 1n);
+  assertFitsDigits(companyPrefix, partitionDef.companyPrefixDigits, 'companyPrefix');
+  assertFitsDigits(itemReference, partitionDef.itemReferenceDigits, 'itemReference');
   const companyPrefixDigits = formatDigits(companyPrefix, partitionDef.companyPrefixDigits);
   const itemReferenceDigits = formatDigits(itemReference, partitionDef.itemReferenceDigits);
 
