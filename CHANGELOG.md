@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/schie/epc/compare/v0.1.1...v0.1.2) (2026-08-07)
+
+
+### Bug Fixes
+
+* **package:** add runtime entry point fallbacks ([3398571](https://github.com/schie/epc/commit/3398571ece96441573e13a3b2c17ea78c866e3a2)), closes [#39](https://github.com/schie/epc/issues/39)
+
 ## [0.1.1](https://github.com/schie/epc/compare/v0.1.0...v0.1.1) (2026-07-20)
 
 
