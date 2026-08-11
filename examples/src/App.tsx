@@ -4,8 +4,14 @@ import {
   computeGs1CheckDigit,
   encodeGid96,
   encodeSgtin96,
+  encodeSgtin96FromEan13,
+  encodeSgtin96FromEan8,
+  encodeSgtin96FromGTIN12,
+  encodeSgtin96FromGTIN13,
+  encodeSgtin96FromGTIN8,
   encodeSgtin96FromUpcA,
   parseEpc,
+  sgtin96ToGtin14,
   validateGs1CheckDigit,
 } from '@schie/epc';
 import { useMemo, useState } from 'react';
@@ -50,15 +56,44 @@ function App() {
   const sgtin = encodeSgtin96(sgtinInput);
   const parsedSgtin = parseEpc(sgtin.hex);
   const gid = encodeGid96({ managerNumber: 123, objectClass: 456, serial: 789 });
-  const upc = '036000291452';
-  const upcCheckDigit = computeGs1CheckDigit(upc.slice(0, 11));
-  const upcIsValid = validateGs1CheckDigit(upc);
-  const sgtinFromUpc = encodeSgtin96FromUpcA({
-    upc,
+  const gtin12 = '036000291452';
+  const gtin12CheckDigit = computeGs1CheckDigit(gtin12.slice(0, 11));
+  const gtin12IsValid = validateGs1CheckDigit(gtin12);
+  const sgtinFromGtin12 = encodeSgtin96FromGTIN12({
+    gtin12,
     companyPrefixLength: 6,
     serial: 987,
     indicatorDigit: 1,
   });
+  const sgtinFromUpc = encodeSgtin96FromUpcA({
+    upc: gtin12,
+    companyPrefixLength: 6,
+    serial: 987,
+    indicatorDigit: 1,
+  });
+  const gtin13 = '4006381333931';
+  const sgtinFromGtin13 = encodeSgtin96FromGTIN13({
+    gtin13,
+    companyPrefixLength: 7,
+    serial: 987,
+  });
+  const sgtinFromEan13 = encodeSgtin96FromEan13({
+    ean13: gtin13,
+    companyPrefixLength: 7,
+    serial: 987,
+  });
+  const gtin8 = '96385074';
+  const sgtinFromGtin8 = encodeSgtin96FromGTIN8({
+    gtin8,
+    companyPrefixLength: 3,
+    serial: 987,
+  });
+  const sgtinFromEan8 = encodeSgtin96FromEan8({
+    ean8: gtin8,
+    companyPrefixLength: 3,
+    serial: 987,
+  });
+  const gtin14FromSgtin = sgtin96ToGtin14(sgtinFromGtin12);
 
   return (
     <div className="space-y-8 p-6 lg:p-10">
@@ -215,18 +250,102 @@ function App() {
 
         <div className="card bg-base-200 shadow-sm">
           <div className="card-body space-y-3">
-            <h2 className="card-title">UPC-A to SGTIN-96</h2>
+            <h2 className="card-title">GTIN-12 / UPC-A to SGTIN-96</h2>
             <p className="text-sm text-base-content/70">
-              Validate a UPC check digit and convert to SGTIN-96.
+              Validate a GTIN-12 check digit and encode it. The UPC-A function is an alias.
             </p>
             <pre className="mockup-code text-xs">
-              <code>{`const upc = '${upc}';
-const checkDigit = computeGs1CheckDigit(upc.slice(0, 11)); // ${upcCheckDigit}
-const isValid = validateGs1CheckDigit(upc); // ${upcIsValid}
-const sgtin = encodeSgtin96FromUpcA({ upc, companyPrefixLength: 6, serial: 987, indicatorDigit: 1 });`}</code>
+              <code>{`const gtin12 = '${gtin12}';
+const checkDigit = computeGs1CheckDigit(gtin12.slice(0, 11)); // ${gtin12CheckDigit}
+const isValid = validateGs1CheckDigit(gtin12); // ${gtin12IsValid}
+const sgtin = encodeSgtin96FromGTIN12({
+  gtin12,
+  companyPrefixLength: 6,
+  serial: 987,
+  indicatorDigit: 1,
+});
+
+// UPC-A is GTIN-12, so this produces the same EPC:
+const fromUpc = encodeSgtin96FromUpcA({
+  upc: gtin12,
+  companyPrefixLength: 6,
+  serial: 987,
+  indicatorDigit: 1,
+});`}</code>
             </pre>
             <pre className="mockup-code text-xs">
-              <code>{JSON.stringify(sgtinFromUpc, null, 2)}</code>
+              <code>{JSON.stringify(sgtinFromGtin12, null, 2)}</code>
+            </pre>
+            <p className="text-xs text-base-content/60">
+              Alias produces the same EPC: {String(sgtinFromUpc.hex === sgtinFromGtin12.hex)}
+            </p>
+          </div>
+        </div>
+
+        <div className="card bg-base-200 shadow-sm">
+          <div className="card-body space-y-3">
+            <h2 className="card-title">GTIN-13 / EAN-13 to SGTIN-96</h2>
+            <p className="text-sm text-base-content/70">
+              Encode a GTIN-13 directly or use its EAN-13 alias.
+            </p>
+            <pre className="mockup-code text-xs">
+              <code>{`const sgtin = encodeSgtin96FromGTIN13({
+  gtin13: '${gtin13}',
+  companyPrefixLength: 7,
+  serial: 987,
+});
+
+const fromEan = encodeSgtin96FromEan13({
+  ean13: '${gtin13}',
+  companyPrefixLength: 7,
+  serial: 987,
+});`}</code>
+            </pre>
+            <pre className="mockup-code text-xs">
+              <code>{JSON.stringify(sgtinFromGtin13, null, 2)}</code>
+            </pre>
+            <p className="text-xs text-base-content/60">
+              Alias produces the same EPC: {String(sgtinFromEan13.hex === sgtinFromGtin13.hex)}
+            </p>
+          </div>
+        </div>
+
+        <div className="card bg-base-200 shadow-sm">
+          <div className="card-body space-y-3">
+            <h2 className="card-title">GTIN-8 / EAN-8 to SGTIN-96</h2>
+            <p className="text-sm text-base-content/70">
+              Encode a GTIN-8 directly or use its EAN-8 alias.
+            </p>
+            <pre className="mockup-code text-xs">
+              <code>{`const sgtin = encodeSgtin96FromGTIN8({
+  gtin8: '${gtin8}',
+  companyPrefixLength: 3,
+  serial: 987,
+});
+
+const fromEan = encodeSgtin96FromEan8({
+  ean8: '${gtin8}',
+  companyPrefixLength: 3,
+  serial: 987,
+});`}</code>
+            </pre>
+            <pre className="mockup-code text-xs">
+              <code>{JSON.stringify(sgtinFromGtin8, null, 2)}</code>
+            </pre>
+            <p className="text-xs text-base-content/60">
+              Alias produces the same EPC: {String(sgtinFromEan8.hex === sgtinFromGtin8.hex)}
+            </p>
+          </div>
+        </div>
+
+        <div className="card bg-base-200 shadow-sm">
+          <div className="card-body space-y-3">
+            <h2 className="card-title">SGTIN-96 to GTIN-14</h2>
+            <p className="text-sm text-base-content/70">
+              Recover the GTIN-14, including its computed GS1 check digit.
+            </p>
+            <pre className="mockup-code text-xs">
+              <code>{`const gtin14 = sgtin96ToGtin14(sgtin); // '${gtin14FromSgtin}'`}</code>
             </pre>
           </div>
         </div>
@@ -234,9 +353,7 @@ const sgtin = encodeSgtin96FromUpcA({ upc, companyPrefixLength: 6, serial: 987, 
         <div className="card bg-base-200 shadow-sm">
           <div className="card-body space-y-3">
             <h2 className="card-title">Encode GID-96</h2>
-            <p className="text-sm text-base-content/70">
-              Use GID-96 for non-GS1 identifiers.
-            </p>
+            <p className="text-sm text-base-content/70">Use GID-96 for non-GS1 identifiers.</p>
             <pre className="mockup-code text-xs">
               <code>{`const gid = encodeGid96({ managerNumber: 123, objectClass: 456, serial: 789 });`}</code>
             </pre>
