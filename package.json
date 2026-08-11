@@ -4,7 +4,7 @@
   "description": "EPC (Electronic Product Code) generator and parser for UHF RFID tags in TypeScript.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/schie/epc.git"
+    "url": "git+https://github.com/schie/epc.git"
   },
   "main": "./dist/index.cjs",
   "module": "./dist/index.mjs",
