@@ -93,9 +93,7 @@ export type Gid96Input = {
  * // => '036000291452'
  * ```
  */
-export type UpcToSgtin96Input = {
-  /** 12-digit UPC-A code. */
-  upc: string;
+type TradeItemToSgtin96Options = {
   /** Length of the company prefix portion. */
   companyPrefixLength: number;
   /** Serial number for the individual item. */
@@ -107,6 +105,33 @@ export type UpcToSgtin96Input = {
   /** Partition value used in tag encoding. */
   partition?: number;
 };
+
+export type Gtin12ToSgtin96Input = TradeItemToSgtin96Options &
+  (
+    | { /** 12-digit GTIN-12. */ gtin12: string; upc?: never }
+    | { /** 12-digit UPC-A (GTIN-12). */ upc: string; gtin12?: never }
+  );
+
+/** Input for converting a UPC-A into an SGTIN-96 EPC. */
+export type UpcToSgtin96Input = Gtin12ToSgtin96Input;
+
+export type Gtin13ToSgtin96Input = TradeItemToSgtin96Options &
+  (
+    | { /** 13-digit GTIN-13. */ gtin13: string; ean13?: never }
+    | { /** 13-digit EAN-13 (GTIN-13). */ ean13: string; gtin13?: never }
+  );
+
+/** Input for converting an EAN-13 into an SGTIN-96 EPC. */
+export type Ean13ToSgtin96Input = Gtin13ToSgtin96Input;
+
+export type Gtin8ToSgtin96Input = TradeItemToSgtin96Options &
+  (
+    | { /** 8-digit GTIN-8. */ gtin8: string; ean8?: never }
+    | { /** 8-digit EAN-8 (GTIN-8). */ ean8: string; gtin8?: never }
+  );
+
+/** Input for converting an EAN-8 into an SGTIN-96 EPC. */
+export type Ean8ToSgtin96Input = Gtin8ToSgtin96Input;
 
 /**
  * SGTIN-96 encoding result.
