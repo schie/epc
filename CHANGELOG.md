@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/schie/epc/compare/v0.1.2...v0.2.0) (2026-08-11)
+
+
+### Features
+
+* **sgtin:** add GTIN conversion helpers ([9c9a7b7](https://github.com/schie/epc/commit/9c9a7b79513e7e919cac5babffe3065c83edd38a))
+
 ## [0.1.2](https://github.com/schie/epc/compare/v0.1.1...v0.1.2) (2026-08-07)
 
 
