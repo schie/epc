@@ -1,8 +1,12 @@
 import {
+  type Ean13ToSgtin96Input,
+  type Ean8ToSgtin96Input,
   EpcScheme,
+  type Gtin12ToSgtin96Input,
+  type Gtin13ToSgtin96Input,
+  type Gtin8ToSgtin96Input,
   type Sgtin96Input,
   type Sgtin96Result,
-  type UpcToSgtin96Input,
 } from './types.js';
 import {
   assertFitsBits,
@@ -15,6 +19,7 @@ import {
   normalizeBigInt,
   normalizeDigits,
   normalizeFixedDigits,
+  normalizeHex,
   padDigits,
 } from './_utils.js';
 
@@ -277,26 +282,91 @@ export function validateGs1CheckDigit(code: string): boolean {
  * // => { filter: 1, partition: 5, companyPrefix: '0036000', itemReference: '129145', serial: '123' }
  * ```
  */
-export function encodeSgtin96FromUpcA(input: UpcToSgtin96Input): Sgtin96Result {
-  const upc = normalizeFixedDigits(input.upc, 'upc', 12);
+export function encodeSgtin96FromGTIN12(input: Gtin12ToSgtin96Input): Sgtin96Result {
+  const isUpc = 'upc' in input && input.upc !== undefined;
+  const code = isUpc ? input.upc : input.gtin12;
+  return encodeSgtin96FromGtin(
+    code,
+    isUpc ? 'upc' : 'gtin12',
+    isUpc ? 'UPC' : 'GTIN-12',
+    12,
+    input,
+  );
+}
+
+/** UPC-A is the barcode representation of GTIN-12. */
+export const encodeSgtin96FromUpcA = encodeSgtin96FromGTIN12;
+
+/** Encode a GTIN-13 into an SGTIN-96 EPC. */
+export function encodeSgtin96FromGTIN13(input: Gtin13ToSgtin96Input): Sgtin96Result {
+  const isEan = 'ean13' in input && input.ean13 !== undefined;
+  const code = isEan ? input.ean13 : input.gtin13;
+  return encodeSgtin96FromGtin(
+    code,
+    isEan ? 'ean13' : 'gtin13',
+    isEan ? 'EAN-13' : 'GTIN-13',
+    13,
+    input,
+  );
+}
+
+/** EAN-13 is the barcode representation of GTIN-13. */
+export const encodeSgtin96FromEan13: (input: Ean13ToSgtin96Input) => Sgtin96Result =
+  encodeSgtin96FromGTIN13;
+
+/** Encode a GTIN-8 into an SGTIN-96 EPC. */
+export function encodeSgtin96FromGTIN8(input: Gtin8ToSgtin96Input): Sgtin96Result {
+  const isEan = 'ean8' in input && input.ean8 !== undefined;
+  const code = isEan ? input.ean8 : input.gtin8;
+  return encodeSgtin96FromGtin(
+    code,
+    isEan ? 'ean8' : 'gtin8',
+    isEan ? 'EAN-8' : 'GTIN-8',
+    8,
+    input,
+  );
+}
+
+/** EAN-8 is the barcode representation of GTIN-8. */
+export const encodeSgtin96FromEan8: (input: Ean8ToSgtin96Input) => Sgtin96Result =
+  encodeSgtin96FromGTIN8;
+
+type GtinEncodingOptions = {
+  companyPrefixLength: number;
+  serial: string | number | bigint;
+  indicatorDigit?: number;
+  filter?: number;
+  partition?: number;
+};
+
+function encodeSgtin96FromGtin(
+  value: string,
+  field: string,
+  displayName: string,
+  length: 8 | 12 | 13,
+  input: GtinEncodingOptions,
+): Sgtin96Result {
+  const gtin = normalizeFixedDigits(value, field, length);
   if (!Number.isInteger(input.companyPrefixLength) || input.companyPrefixLength <= 0) {
     throw new Error('companyPrefixLength must be a positive integer');
   }
-  if (input.companyPrefixLength >= 11) {
+  if (input.companyPrefixLength > length - 1) {
     throw new Error('companyPrefixLength must leave room for an item reference');
   }
 
-  const payload = upc.slice(0, 11);
+  const payload = gtin.slice(0, -1);
   const expectedCheck = computeGs1CheckDigit(payload);
-  const actualCheck = Number(upc[11]);
+  const actualCheck = Number(gtin[length - 1]);
   if (expectedCheck !== actualCheck) {
-    throw new Error(`UPC check digit mismatch: expected ${expectedCheck}, got ${actualCheck}`);
+    throw new Error(
+      `${displayName} check digit mismatch: expected ${expectedCheck}, got ${actualCheck}`,
+    );
   }
 
   const indicatorDigit = normalizeIndicatorDigit(input.indicatorDigit);
-  const companyPrefix = upc.slice(0, input.companyPrefixLength);
-  const itemReference = upc.slice(input.companyPrefixLength, 11);
-  const gs1CompanyPrefix = `0${companyPrefix}`;
+  const companyPrefix = payload.slice(0, input.companyPrefixLength);
+  const itemReference = payload.slice(input.companyPrefixLength);
+  const gs1CompanyPrefix = `${'0'.repeat(13 - length)}${companyPrefix}`;
   const itemReferenceWithIndicator = `${indicatorDigit}${itemReference}`;
   const serial = normalizeSgtinSerial(input.serial);
   const filter = input.filter ?? 1;
@@ -308,6 +378,33 @@ export function encodeSgtin96FromUpcA(input: UpcToSgtin96Input): Sgtin96Result {
     filter,
     partition: input.partition,
   });
+}
+
+/** Convert an SGTIN-96 EPC to its 14-digit GTIN. */
+export function sgtin96ToGtin14(epc: string | bigint | Sgtin96Result): string {
+  let value: bigint;
+  if (typeof epc === 'string') {
+    value = BigInt(`0x${normalizeHex(epc)}`);
+  } else if (typeof epc === 'bigint') {
+    if (epc < 0n || epc >= 1n << 96n) {
+      throw new Error('EPC bigint must be an unsigned 96-bit value');
+    }
+    value = epc;
+  } else {
+    if (epc === null || typeof epc.hex !== 'string') {
+      throw new Error('EPC must be a hex string, bigint, or SGTIN-96 result');
+    }
+    value = BigInt(`0x${normalizeHex(epc.hex)}`);
+  }
+
+  const header = getBits(value, 0, 8);
+  if (!isSgtin96Header(header)) {
+    throw new Error(`EPC is not SGTIN-96 (header 0x${header.toString(16).toUpperCase()})`);
+  }
+  const parsed = parseSgtin96(value);
+
+  const payload = `${parsed.fields.itemReference[0]}${parsed.fields.companyPrefix}${parsed.fields.itemReference.slice(1)}`;
+  return appendGs1CheckDigit(payload);
 }
 
 /**

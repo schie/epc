@@ -3,9 +3,15 @@ import {
   appendGs1CheckDigit,
   computeGs1CheckDigit,
   encodeSgtin96,
+  encodeSgtin96FromEan13,
+  encodeSgtin96FromEan8,
+  encodeSgtin96FromGTIN12,
+  encodeSgtin96FromGTIN13,
+  encodeSgtin96FromGTIN8,
   encodeSgtin96FromUpcA,
   isSgtin96Header,
   parseSgtin96,
+  sgtin96ToGtin14,
   validateGs1CheckDigit,
 } from './sgtin-96.js';
 import { encodeGid96, isGid96Header, parseGid96 } from './gid-96.js';
@@ -13,9 +19,14 @@ import { getBits, normalizeHex } from './_utils.js';
 
 export { EpcScheme } from './types.js';
 export type {
+  Ean13ToSgtin96Input,
+  Ean8ToSgtin96Input,
   EpcResult,
   Gid96Input,
   Gid96Result,
+  Gtin12ToSgtin96Input,
+  Gtin13ToSgtin96Input,
+  Gtin8ToSgtin96Input,
   Sgtin96Input,
   Sgtin96Result,
   UpcToSgtin96Input,
@@ -25,7 +36,13 @@ export {
   computeGs1CheckDigit,
   encodeGid96,
   encodeSgtin96,
+  encodeSgtin96FromEan13,
+  encodeSgtin96FromEan8,
+  encodeSgtin96FromGTIN12,
+  encodeSgtin96FromGTIN13,
+  encodeSgtin96FromGTIN8,
   encodeSgtin96FromUpcA,
+  sgtin96ToGtin14,
   validateGs1CheckDigit,
 };
 

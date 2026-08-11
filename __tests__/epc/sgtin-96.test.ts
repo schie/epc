@@ -2,13 +2,20 @@ import {
   appendGs1CheckDigit,
   computeGs1CheckDigit,
   encodeSgtin96,
+  encodeSgtin96FromEan13,
+  encodeSgtin96FromEan8,
+  encodeSgtin96FromGTIN12,
+  encodeSgtin96FromGTIN13,
+  encodeSgtin96FromGTIN8,
   encodeSgtin96FromUpcA,
   isSgtin96Header,
   parseSgtin96,
   resolveSgtinPartition,
+  sgtin96ToGtin14,
   validateGs1CheckDigit,
 } from '../../src/sgtin-96.js';
 import { buildEpc96 } from '../../src/_utils.js';
+import type { Sgtin96Result } from '../../src/types.js';
 
 const SAMPLE_COMPANY_PREFIX = '0614141';
 const SAMPLE_ITEM_REFERENCE = '812345';
@@ -128,6 +135,23 @@ describe('GS1 check digit helpers', () => {
 });
 
 describe('encodeSgtin96FromUpcA', () => {
+  it('is an alias for the GTIN-12 encoder', () => {
+    expect(encodeSgtin96FromUpcA).toBe(encodeSgtin96FromGTIN12);
+    expect(
+      encodeSgtin96FromGTIN12({
+        gtin12: '036000291452',
+        companyPrefixLength: 6,
+        serial: 123,
+      }),
+    ).toEqual(
+      encodeSgtin96FromUpcA({
+        upc: '036000291452',
+        companyPrefixLength: 6,
+        serial: 123,
+      }),
+    );
+  });
+
   it('encodes a valid UPC-A into SGTIN-96', () => {
     const encoded = encodeSgtin96FromUpcA({
       upc: '036000291452',
@@ -173,7 +197,7 @@ describe('encodeSgtin96FromUpcA', () => {
     expect(() =>
       encodeSgtin96FromUpcA({
         upc: '036000291452',
-        companyPrefixLength: 11,
+        companyPrefixLength: 12,
         serial: 1,
       }),
     ).toThrow('companyPrefixLength must leave room for an item reference');
@@ -232,6 +256,117 @@ describe('encodeSgtin96FromUpcA', () => {
         serial: '0001',
       }),
     ).toThrow('serial must not start with 0');
+  });
+});
+
+describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
+  it.each([
+    {
+      encode: () =>
+        encodeSgtin96FromGTIN12({
+          gtin12: '036000291452',
+          companyPrefixLength: 11,
+          serial: 123,
+        }),
+      companyPrefix: '003600029145',
+    },
+    {
+      encode: () =>
+        encodeSgtin96FromGTIN13({
+          gtin13: '4006381333931',
+          companyPrefixLength: 12,
+          serial: 123,
+        }),
+      companyPrefix: '400638133393',
+    },
+    {
+      encode: () =>
+        encodeSgtin96FromGTIN8({
+          gtin8: '96385074',
+          companyPrefixLength: 7,
+          serial: 123,
+        }),
+      companyPrefix: '000009638507',
+    },
+  ])('supports a partition-0 company prefix', ({ encode, companyPrefix }) => {
+    const encoded = encode();
+
+    expect(encoded.fields.partition).toBe(0);
+    expect(encoded.fields.companyPrefix).toBe(companyPrefix);
+    expect(encoded.fields.itemReference).toBe('0');
+  });
+
+  it('encodes GTIN-13 and exposes EAN-13 as an alias', () => {
+    expect(encodeSgtin96FromEan13).toBe(encodeSgtin96FromGTIN13);
+    const encoded = encodeSgtin96FromGTIN13({
+      gtin13: '4006381333931',
+      companyPrefixLength: 7,
+      serial: 123,
+    });
+
+    expect(encoded.fields.companyPrefix).toBe('4006381');
+    expect(encoded.fields.itemReference).toBe('033393');
+    expect(sgtin96ToGtin14(encoded)).toBe('04006381333931');
+
+    expect(
+      encodeSgtin96FromEan13({
+        ean13: '4006381333931',
+        companyPrefixLength: 7,
+        serial: 123,
+      }),
+    ).toEqual(encoded);
+  });
+
+  it('encodes GTIN-8 and exposes EAN-8 as an alias', () => {
+    expect(encodeSgtin96FromEan8).toBe(encodeSgtin96FromGTIN8);
+    const encoded = encodeSgtin96FromEan8({
+      ean8: '96385074',
+      companyPrefixLength: 3,
+      serial: 123,
+    });
+
+    expect(encoded.fields.companyPrefix).toBe('00000963');
+    expect(encoded.fields.itemReference).toBe('08507');
+    expect(sgtin96ToGtin14(encoded.hex)).toBe('00000096385074');
+
+    expect(
+      encodeSgtin96FromGTIN8({
+        gtin8: '96385074',
+        companyPrefixLength: 3,
+        serial: 123,
+      }),
+    ).toEqual(encoded);
+  });
+});
+
+describe('sgtin96ToGtin14', () => {
+  it('converts an SGTIN-96 bigint and preserves the indicator digit', () => {
+    const encoded = encodeSgtin96FromGTIN12({
+      gtin12: '036000291452',
+      companyPrefixLength: 6,
+      serial: 123,
+      indicatorDigit: 1,
+    });
+
+    expect(sgtin96ToGtin14(BigInt(`0x${encoded.hex}`))).toBe('10036000291459');
+  });
+
+  it('rejects non-SGTIN EPCs', () => {
+    expect(() => sgtin96ToGtin14('350000000000000000000000')).toThrow('EPC is not SGTIN-96');
+  });
+
+  it('rejects bigints outside the unsigned 96-bit range', () => {
+    expect(() => sgtin96ToGtin14(-1n)).toThrow('EPC bigint must be an unsigned 96-bit value');
+    expect(() => sgtin96ToGtin14(1n << 96n)).toThrow('EPC bigint must be an unsigned 96-bit value');
+  });
+
+  it('rejects invalid result objects at runtime', () => {
+    expect(() => sgtin96ToGtin14(null as unknown as Sgtin96Result)).toThrow(
+      'EPC must be a hex string, bigint, or SGTIN-96 result',
+    );
+    expect(() => sgtin96ToGtin14({} as Sgtin96Result)).toThrow(
+      'EPC must be a hex string, bigint, or SGTIN-96 result',
+    );
   });
 });
 
