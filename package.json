@@ -100,5 +100,10 @@
     "**/*.{js,json}": [
       "pnpm run lint:fix"
     ]
+  },
+  "pnpm": {
+    "overrides": {
+      "esbuild": ">=0.28.1"
+    }
   }
 }
