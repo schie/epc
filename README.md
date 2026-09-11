@@ -11,16 +11,17 @@
 
 A modern, type-safe TypeScript library for generating and parsing **EPC (Electronic Product Code)** identifiers used in UHF RFID tags.
 
-> **⚠️ Early Development Notice**  
-> This library is under active early development. Until v1.0.0 is released, consider all releases potentially breaking. The API may change significantly between versions as we refine the design based on user feedback and real-world usage patterns.
+> **📌 Stability**  
+> As of v1.0.0, `@schie/epc` follows [Semantic Versioning](https://semver.org/). Breaking changes ship only in a major version and are documented in [UPGRADING.md](UPGRADING.md).
 
 ## ✨ Features
 
 - 🧩 **EPC Generation** - Create EPCs from GS1 components
 - 🔍 **Parsing** - Decode EPC hex into structured data
+- 🔄 **GTIN/EAN/UPC Conversion** - Encode existing barcodes into SGTIN-96, or recover a GTIN-14 from one
 - 🛡️ **Type Safe** - Full TypeScript support with comprehensive types
 - 📦 **Zero Dependencies** - Lightweight and fast
-- 🧪 **Ready for Testing** - Built for easy unit test coverage
+- 🧪 **100% Test Coverage** - Enforced on every change
 
 ## 🚀 Quick Start
 
@@ -49,6 +50,23 @@ const parsed = parseEpc(epc.hex);
 console.log(parsed.scheme); // sgtin-96
 ```
 
+Convert an existing GTIN/EAN/UPC into an SGTIN-96 EPC, or reverse an SGTIN-96 EPC back into a GTIN-14:
+
+```typescript
+import { encodeSgtin96FromGtin12, sgtin96ToGtin14 } from '@schie/epc';
+
+// GTIN-12 (and its UPC-A barcode form) both work via encodeSgtin96FromGtin12 / encodeSgtin96FromUpcA
+const fromGtin = encodeSgtin96FromGtin12({
+  gtin12: '036000291452',
+  companyPrefixLength: 6,
+  serial: 987,
+});
+
+sgtin96ToGtin14(fromGtin); // '00036000291452'
+```
+
+`encodeSgtin96FromGtin13`/`encodeSgtin96FromEan13` and `encodeSgtin96FromGtin8`/`encodeSgtin96FromEan8` work the same way for 13- and 8-digit codes.
+
 ## 📦 Package Information
 
 - **ES Modules**: Full ESM support with tree shaking
@@ -58,8 +76,9 @@ console.log(parsed.scheme); // sgtin-96
 
 ## 🧾 Supported Schemes
 
-- SGTIN-96
-- GID-96
+- **SGTIN-96** - encode/parse, plus conversion from GTIN-8, GTIN-12/UPC-A, and GTIN-13/EAN-13 codes (and back to a GTIN-14)
+- **GID-96** - encode/parse for non-GS1 identifiers
+- **GS1 check digits** - compute, append, and validate
 
 ## 🤝 Contributing
 
