@@ -72,16 +72,16 @@ Contributions are welcome! This project uses:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Run tests
-npm test
+pnpm test
 
 # Build
-npm run build
+pnpm run build
 
 # Lint
-npm run lint
+pnpm run lint
 ```
 
 ## 📄 License
