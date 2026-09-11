@@ -125,7 +125,9 @@ function GtinConverterTool() {
   }, [form]);
 
   const updateField =
-    (field: 'code' | 'companyPrefixLength' | 'serial' | 'indicatorDigit' | 'filter' | 'partition') =>
+    (
+      field: 'code' | 'companyPrefixLength' | 'serial' | 'indicatorDigit' | 'filter' | 'partition',
+    ) =>
     (event: ChangeEvent<HTMLInputElement>) => {
       setForm((prev) => ({ ...prev, [field]: event.target.value }));
     };
@@ -221,8 +223,8 @@ function GtinConverterTool() {
 
         {converted.ok && (
           <p className="text-xs text-base-content/60">
-            <code>encodeSgtin96From{preset.aliasLabel.replace(/[^A-Za-z0-9]/g, '')}</code>{' '}
-            produces the same EPC: {String(converted.aliasMatches)}
+            <code>encodeSgtin96From{preset.aliasLabel.replace(/[^A-Za-z0-9]/g, '')}</code> produces
+            the same EPC: {String(converted.aliasMatches)}
           </p>
         )}
       </div>

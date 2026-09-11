@@ -23,10 +23,7 @@ function ThemeToggle() {
   const [defaultChecked] = useState(getInitialTheme);
 
   return (
-    <label
-      className="swap swap-rotate btn btn-ghost btn-circle"
-      aria-label="Toggle dark theme"
-    >
+    <label className="swap swap-rotate btn btn-ghost btn-circle" aria-label="Toggle dark theme">
       <input
         type="checkbox"
         className="theme-controller"

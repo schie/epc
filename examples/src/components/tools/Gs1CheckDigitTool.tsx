@@ -6,7 +6,11 @@ function ComputeCard() {
 
   const computed = useMemo(() => {
     try {
-      return { ok: true as const, checkDigit: computeGs1CheckDigit(payload), appended: appendGs1CheckDigit(payload) };
+      return {
+        ok: true as const,
+        checkDigit: computeGs1CheckDigit(payload),
+        appended: appendGs1CheckDigit(payload),
+      };
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Unknown error';
       return { ok: false as const, error: message };
