@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.0](https://github.com/schie/epc/compare/v0.2.0...v1.0.0) (2026-09-11)
+
+
+### ⚠ BREAKING CHANGES
+
+* **sgtin:** `encodeSgtin96FromGTIN12`, `encodeSgtin96FromGTIN13`, and `encodeSgtin96FromGTIN8` are renamed to `encodeSgtin96FromGtin12`, `encodeSgtin96FromGtin13`, and `encodeSgtin96FromGtin8`.
+
+### Bug Fixes
+
+* **deps:** pin esbuild to &gt;=0.28.1 to patch path traversal vuln ([17bacaa](https://github.com/schie/epc/commit/17bacaae526fe2b774d35ebdb5062fb2b44de175))
+* **sgtin:** rename encodeSgtin96FromGTIN12/13/8 to encodeSgtin96FromGtin12/13/8 ([7593503](https://github.com/schie/epc/commit/75935038751f4f82aaba721e4a78111fbeede166))
+
 ## [0.2.0](https://github.com/schie/epc/compare/v0.1.2...v0.2.0) (2026-08-11)
 
 
