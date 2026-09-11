@@ -45,6 +45,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write # for npm provenance
 
     steps:
       - name: Checkout Repository
@@ -72,6 +73,6 @@ jobs:
         run: pnpm test
 
       - name: Publish to NPM
-        run: pnpm publish --access public --no-git-checks
+        run: pnpm publish --access public --no-git-checks --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
