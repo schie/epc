@@ -19,7 +19,27 @@ const require = createRequire(import.meta.url);
 const commonJsEntry = require(mainPath);
 const esModuleEntry = await import(pathToFileURL(modulePath));
 
+const expectedFunctions = [
+  'appendGs1CheckDigit',
+  'computeGs1CheckDigit',
+  'encodeGid96',
+  'encodeSgtin96',
+  'encodeSgtin96FromEan13',
+  'encodeSgtin96FromEan8',
+  'encodeSgtin96FromGtin12',
+  'encodeSgtin96FromGtin13',
+  'encodeSgtin96FromGtin8',
+  'encodeSgtin96FromUpcA',
+  'parseEpc',
+  'sgtin96ToGtin14',
+  'validateGs1CheckDigit',
+];
+
 for (const entry of [commonJsEntry, esModuleEntry]) {
-  assert.equal(typeof entry.appendGs1CheckDigit, 'function');
-  assert.equal(typeof entry.parseEpc, 'function');
+  for (const name of expectedFunctions) {
+    assert.equal(typeof entry[name], 'function', `expected ${name} to be a function`);
+  }
+  assert.equal(typeof entry.EpcScheme, 'object');
+  assert.equal(entry.EpcScheme.SGTIN_96, 'sgtin-96');
+  assert.equal(entry.EpcScheme.GID_96, 'gid-96');
 }
