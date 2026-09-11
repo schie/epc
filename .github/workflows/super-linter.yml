@@ -56,8 +56,8 @@ jobs:
           YAML_PRETTIER_CONFIG_FILE: .prettierrc
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
 
-          # Exclude patterns
-          FILTER_REGEX_EXCLUDE: .*/(node_modules|dist|coverage|\.git|__fixtures__)/.*
+          # Exclude patterns (CHANGELOG.md is release-please generated, not hand-authored)
+          FILTER_REGEX_EXCLUDE: .*/(node_modules|dist|coverage|\.git|__fixtures__)/.*|CHANGELOG\.md
 
           # Output configuration
           LOG_LEVEL: INFO

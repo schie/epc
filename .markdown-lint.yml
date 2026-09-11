@@ -18,6 +18,3 @@ MD026: false
 
 # Allow bare URLs
 MD034: false
-
-# Allow multiple consecutive blank lines (release-please's CHANGELOG.md template)
-MD012: false
