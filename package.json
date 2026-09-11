@@ -29,31 +29,31 @@
     }
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=20.0.0",
+    "pnpm": ">=10.0.0"
   },
-  "packageManager": "npm@8.4.0",
+  "packageManager": "pnpm@10.34.5+sha512.a4ee05f2f73658255bd6a89859c065a45c28a57daefae2c893a168ee2b73168c37b91e83e57ea67654ad03f03031746430e8bce38e362e042605fb8abc80192e",
   "files": [
     "dist",
     "src"
   ],
   "scripts": {
     "build": "tsc && tsup",
-    "lint": "eslint . && npm run lint:lockfile",
+    "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:lockfile": "lockfile-lint --path package-lock.json --validate-https --allowed-hosts npm yarn",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run build",
+    "prepare": "pnpm run build",
+    "prepublishOnly": "pnpm run build",
     "test": "NODE_OPTIONS='--experimental-vm-modules' jest",
     "test:package": "node scripts/check-package-entrypoints.mjs",
     "test:watch": "NODE_OPTIONS='--experimental-vm-modules' jest --watch",
     "test:coverage": "NODE_OPTIONS='--experimental-vm-modules' jest --coverage",
     "docs": "typedoc",
-    "docs:pages": "npm run docs && npm run examples:install && npm run examples:build && rm -rf docs/examples && cp -R examples/dist docs/examples",
+    "docs:pages": "pnpm run docs && pnpm run examples:install && pnpm run examples:build && rm -rf docs/examples && cp -R examples/dist docs/examples",
     "docs:serve": "npx http-server docs",
-    "examples:install": "cd examples && npm install",
-    "examples:dev": "cd examples && npm run dev",
-    "examples:build": "cd examples && npm run build",
-    "examples:preview": "cd examples && npm run preview"
+    "examples:install": "cd examples && pnpm install",
+    "examples:dev": "cd examples && pnpm run dev",
+    "examples:build": "cd examples && pnpm run build",
+    "examples:preview": "cd examples && pnpm run preview"
   },
   "author": {
     "name": "Dustin Schie",
@@ -82,7 +82,6 @@
     "eslint-plugin-security": "^3.0.1",
     "jest": "^30.2.0",
     "lint-staged": "^16.2.7",
-    "lockfile-lint": "^4.14.0",
     "neostandard": "^0.12.2",
     "prettier": "3.9.5",
     "ts-jest": "29.4.11",
@@ -94,7 +93,7 @@
   },
   "lint-staged": {
     "**/*.{js,json}": [
-      "npm run lint:fix"
+      "pnpm run lint:fix"
     ]
   }
 }
