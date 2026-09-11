@@ -2,9 +2,9 @@ import {
   computeGs1CheckDigit,
   encodeSgtin96FromEan13,
   encodeSgtin96FromEan8,
-  encodeSgtin96FromGTIN12,
-  encodeSgtin96FromGTIN13,
-  encodeSgtin96FromGTIN8,
+  encodeSgtin96FromGtin12,
+  encodeSgtin96FromGtin13,
+  encodeSgtin96FromGtin8,
   encodeSgtin96FromUpcA,
   validateGs1CheckDigit,
   type Sgtin96Result,
@@ -55,11 +55,11 @@ type EncodeOptions = {
 function encodeByGtin(length: GtinLength, code: string, options: EncodeOptions): Sgtin96Result {
   switch (length) {
     case 8:
-      return encodeSgtin96FromGTIN8({ gtin8: code, ...options });
+      return encodeSgtin96FromGtin8({ gtin8: code, ...options });
     case 12:
-      return encodeSgtin96FromGTIN12({ gtin12: code, ...options });
+      return encodeSgtin96FromGtin12({ gtin12: code, ...options });
     case 13:
-      return encodeSgtin96FromGTIN13({ gtin13: code, ...options });
+      return encodeSgtin96FromGtin13({ gtin13: code, ...options });
   }
 }
 

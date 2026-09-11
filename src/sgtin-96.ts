@@ -282,7 +282,7 @@ export function validateGs1CheckDigit(code: string): boolean {
  * // => { filter: 1, partition: 5, companyPrefix: '0036000', itemReference: '129145', serial: '123' }
  * ```
  */
-export function encodeSgtin96FromGTIN12(input: Gtin12ToSgtin96Input): Sgtin96Result {
+export function encodeSgtin96FromGtin12(input: Gtin12ToSgtin96Input): Sgtin96Result {
   const isUpc = 'upc' in input && input.upc !== undefined;
   const code = isUpc ? input.upc : input.gtin12;
   return encodeSgtin96FromGtin(
@@ -295,10 +295,10 @@ export function encodeSgtin96FromGTIN12(input: Gtin12ToSgtin96Input): Sgtin96Res
 }
 
 /** UPC-A is the barcode representation of GTIN-12. */
-export const encodeSgtin96FromUpcA = encodeSgtin96FromGTIN12;
+export const encodeSgtin96FromUpcA = encodeSgtin96FromGtin12;
 
 /** Encode a GTIN-13 into an SGTIN-96 EPC. */
-export function encodeSgtin96FromGTIN13(input: Gtin13ToSgtin96Input): Sgtin96Result {
+export function encodeSgtin96FromGtin13(input: Gtin13ToSgtin96Input): Sgtin96Result {
   const isEan = 'ean13' in input && input.ean13 !== undefined;
   const code = isEan ? input.ean13 : input.gtin13;
   return encodeSgtin96FromGtin(
@@ -312,10 +312,10 @@ export function encodeSgtin96FromGTIN13(input: Gtin13ToSgtin96Input): Sgtin96Res
 
 /** EAN-13 is the barcode representation of GTIN-13. */
 export const encodeSgtin96FromEan13: (input: Ean13ToSgtin96Input) => Sgtin96Result =
-  encodeSgtin96FromGTIN13;
+  encodeSgtin96FromGtin13;
 
 /** Encode a GTIN-8 into an SGTIN-96 EPC. */
-export function encodeSgtin96FromGTIN8(input: Gtin8ToSgtin96Input): Sgtin96Result {
+export function encodeSgtin96FromGtin8(input: Gtin8ToSgtin96Input): Sgtin96Result {
   const isEan = 'ean8' in input && input.ean8 !== undefined;
   const code = isEan ? input.ean8 : input.gtin8;
   return encodeSgtin96FromGtin(
@@ -329,7 +329,7 @@ export function encodeSgtin96FromGTIN8(input: Gtin8ToSgtin96Input): Sgtin96Resul
 
 /** EAN-8 is the barcode representation of GTIN-8. */
 export const encodeSgtin96FromEan8: (input: Ean8ToSgtin96Input) => Sgtin96Result =
-  encodeSgtin96FromGTIN8;
+  encodeSgtin96FromGtin8;
 
 type GtinEncodingOptions = {
   companyPrefixLength: number;

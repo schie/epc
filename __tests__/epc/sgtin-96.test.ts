@@ -4,9 +4,9 @@ import {
   encodeSgtin96,
   encodeSgtin96FromEan13,
   encodeSgtin96FromEan8,
-  encodeSgtin96FromGTIN12,
-  encodeSgtin96FromGTIN13,
-  encodeSgtin96FromGTIN8,
+  encodeSgtin96FromGtin12,
+  encodeSgtin96FromGtin13,
+  encodeSgtin96FromGtin8,
   encodeSgtin96FromUpcA,
   isSgtin96Header,
   parseSgtin96,
@@ -136,9 +136,9 @@ describe('GS1 check digit helpers', () => {
 
 describe('encodeSgtin96FromUpcA', () => {
   it('is an alias for the GTIN-12 encoder', () => {
-    expect(encodeSgtin96FromUpcA).toBe(encodeSgtin96FromGTIN12);
+    expect(encodeSgtin96FromUpcA).toBe(encodeSgtin96FromGtin12);
     expect(
-      encodeSgtin96FromGTIN12({
+      encodeSgtin96FromGtin12({
         gtin12: '036000291452',
         companyPrefixLength: 6,
         serial: 123,
@@ -263,7 +263,7 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
   it.each([
     {
       encode: () =>
-        encodeSgtin96FromGTIN12({
+        encodeSgtin96FromGtin12({
           gtin12: '036000291452',
           companyPrefixLength: 11,
           serial: 123,
@@ -272,7 +272,7 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
     },
     {
       encode: () =>
-        encodeSgtin96FromGTIN13({
+        encodeSgtin96FromGtin13({
           gtin13: '4006381333931',
           companyPrefixLength: 12,
           serial: 123,
@@ -281,7 +281,7 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
     },
     {
       encode: () =>
-        encodeSgtin96FromGTIN8({
+        encodeSgtin96FromGtin8({
           gtin8: '96385074',
           companyPrefixLength: 7,
           serial: 123,
@@ -297,8 +297,8 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
   });
 
   it('encodes GTIN-13 and exposes EAN-13 as an alias', () => {
-    expect(encodeSgtin96FromEan13).toBe(encodeSgtin96FromGTIN13);
-    const encoded = encodeSgtin96FromGTIN13({
+    expect(encodeSgtin96FromEan13).toBe(encodeSgtin96FromGtin13);
+    const encoded = encodeSgtin96FromGtin13({
       gtin13: '4006381333931',
       companyPrefixLength: 7,
       serial: 123,
@@ -318,7 +318,7 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
   });
 
   it('encodes GTIN-8 and exposes EAN-8 as an alias', () => {
-    expect(encodeSgtin96FromEan8).toBe(encodeSgtin96FromGTIN8);
+    expect(encodeSgtin96FromEan8).toBe(encodeSgtin96FromGtin8);
     const encoded = encodeSgtin96FromEan8({
       ean8: '96385074',
       companyPrefixLength: 3,
@@ -330,7 +330,7 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
     expect(sgtin96ToGtin14(encoded.hex)).toBe('00000096385074');
 
     expect(
-      encodeSgtin96FromGTIN8({
+      encodeSgtin96FromGtin8({
         gtin8: '96385074',
         companyPrefixLength: 3,
         serial: 123,
@@ -341,7 +341,7 @@ describe('GTIN-13/EAN-13 and GTIN-8/EAN-8 encoders', () => {
 
 describe('sgtin96ToGtin14', () => {
   it('converts an SGTIN-96 bigint and preserves the indicator digit', () => {
-    const encoded = encodeSgtin96FromGTIN12({
+    const encoded = encodeSgtin96FromGtin12({
       gtin12: '036000291452',
       companyPrefixLength: 6,
       serial: 123,
