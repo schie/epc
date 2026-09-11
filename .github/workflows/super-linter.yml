@@ -47,10 +47,13 @@ jobs:
           VALIDATE_YAML: true
           VALIDATE_GITHUB_ACTIONS: true
 
+          # Config files below are at the repo root, not the default .github/linters
+          LINTER_RULES_PATH: .
+
           # Configuration files
-          TYPESCRIPT_PRETTIER_CONFIG_FILE: .prettierrc.json
-          JSON_PRETTIER_CONFIG_FILE: .prettierrc.json
-          YAML_PRETTIER_CONFIG_FILE: .prettierrc.json
+          TYPESCRIPT_PRETTIER_CONFIG_FILE: .prettierrc
+          JSON_PRETTIER_CONFIG_FILE: .prettierrc
+          YAML_PRETTIER_CONFIG_FILE: .prettierrc
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
 
           # Exclude patterns
