@@ -10,6 +10,7 @@
   "module": "./dist/index.mjs",
   "types": "dist/index.d.ts",
   "type": "module",
+  "sideEffects": false,
   "exports": {
     ".": {
       "import": {
@@ -67,8 +68,12 @@
     "rfid",
     "uhf",
     "typescript",
-    "fluent",
-    "builder"
+    "gs1",
+    "gtin",
+    "sgtin",
+    "upc",
+    "ean",
+    "barcode"
   ],
   "homepage": "https://github.com/schie/epc#readme",
   "bugs": {
